@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Grizette</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --bg-from: #ffffff;
+      --bg-to: #e0e0e0;
+      --text-main: #111111;
+      --accent: #999999;
+      --radius-xl: 24px;
+      --radius-lg: 18px;
+      --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.07);
+      --font-main: system-ui, -apple-system, BlinkMacSystemFont, -system-ui, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: var(--font-main);
+      color: var(--text-main);
+      background:
+        radial-gradient(circle at top left, #ffffff 0, transparent 55%),
+        linear-gradient(to bottom right, var(--bg-from), var(--bg-to));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .page-wrap {
+      width: 100%;
+      max-width: 960px;
+      padding: 40px 24px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.97);
+      border-radius: var(--radius-xl);
+      padding: 32px 24px 28px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(0, 0, 0, 0.03);
+      backdrop-filter: blur(6px);
+    }
+
+    h1 {
+      text-align: center;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-size: 26px;
+      margin-bottom: 26px;
+      color: #222222;
+    }
+
+    .image-box {
+      position: relative;
+      margin: 0 auto 30px;
+      max-width: 900px; /* Agrandi */
+      border-radius: var(--radius-lg);
+      padding: 12px;
+      background: linear-gradient(135deg, rgba(0, 0, 0, 0.04), rgba(255, 255, 255, 1));
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.06);
+      overflow: hidden;
+    }
+
+    .image-box::before {
+      content: "Grizette";
+      position: absolute;
+      top: 10px;
+      left: 16px;
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      z-index: 2;
+    }
+
+    .image-inner {
+      border-radius: calc(var(--radius-lg) - 6px);
+      overflow: hidden;
+      background: #f1f1f1;
+      aspect-ratio: 16 / 10; /* Plus haut qu’avant */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .image-inner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.4s ease;
+    }
+
+    .image-box:hover .image-inner img {
+      transform: scale(1.02);
+    }
+
+    .lorem {
+      max-width: 720px;
+      margin: 0 auto;
+      font-size: 14px;
+      line-height: 1.7;
+      color: #555555;
+    }
+
+    .lorem span {
+      background: rgba(0, 0, 0, 0.02);
+      padding: 2px 6px;
+      border-radius: 8px;
+    }
+
+    @media (max-width: 768px) {
+      .image-box {
+        max-width: 100%;
+        padding: 8px;
+      }
+      .image-inner {
+        aspect-ratio: 4 / 3; /* un peu plus carré sur mobile */
+      }
+    }
+
+    @media (min-width: 768px) {
+      .card {
+        padding: 40px 40px 34px;
+      }
+      h1 {
+        font-size: 30px;
+        margin-bottom: 30px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrap">
+    <div class="card">
+      <h1>Grizette</h1>
+
+      <div class="image-box">
+        <div class="image-inner">
+          <img id="grizette-image" src="" alt="Image aléatoire de Grizette" />
+        </div>
+      </div>
+
+      <div class="lorem">
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed condimentum
+          dui id malesuada maximus. Integer semper, nisl ac cursus scelerisque,
+          nisl orci ultricies lectus, vitae pulvinar ligula lacus in enim.
+          Suspendisse potenti. Integer feugiat purus ac
+          <span>elegantia grisea</span> et gravida tortor posuere. Etiam venenatis
+          erat arcu efficitur est, in laoreet ipsum mauris non augue.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const imageCount = 39; // nombre total d’images
+    function getRandomImageSrc() {
+      const index = Math.floor(Math.random() * imageCount) + 1;
+      return `./images/1 (${index}).jpg`;
+    }
+    document.addEventListener("DOMContentLoaded", () => {
+      const img = document.getElementById("grizette-image");
+      img.src = getRandomImageSrc();
+    });
+  </script>
+</body>
+</html>
