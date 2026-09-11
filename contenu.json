@@ -1,0 +1,37 @@
+{
+  "_mode_d_emploi": "Textes du site. Mettre \"a_confirmer\": false une fois l'information vérifiée. Une valeur vide \"\" n'est pas affichée : elle devient un emplacement <!-- À COMPLÉTER --> dans le HTML. {nb_photos} est remplacé automatiquement.",
+  "photo_vedette": "Grizette (1).jpg",
+  "photo_404": "Grizette (17).jpg",
+  "accueil": {
+    "titre": "Grizette, le fan club officiel de la chatte de Fanny",
+    "description": "Le fan club officiel de Grizette, chatte tigrée grise et blanche aux yeux verts adoptée par Fanny : {nb_photos} photos, son histoire et ses petites manies."
+  },
+  "presentation": {
+    "titre": "Qui est Grizette ?",
+    "paragraphes": [
+      { "texte": "Grizette est une chatte tigrée grise et blanche. Elle vit avec Fanny, qui l'a adoptée dans un refuge.", "a_confirmer": true },
+      { "texte": "Elle est originaire de Hyères, dans le Var. Vers l'âge d'un an, elle a été trouvée dans une pizzeria abandonnée, où elle avait mis au monde ses chatons. Un refuge l'a recueillie, puis Fanny l'a adoptée. Ses chatons ont été adoptés par d'autres familles.", "a_confirmer": true },
+      { "texte": "Son pelage est gris tigré sur la tête et le dos, blanc sur le poitrail, le ventre et les pattes. Elle a les yeux verts et une truffe rose marquée d'une petite tache brune.", "a_confirmer": true },
+      { "texte": "Grizette est intelligente, douce, affectueuse et protectrice, avec une pointe de maladresse. Son plat préféré est le poulet. Elle adore dormir dans les paniers, les sacs et sous les couvertures.", "a_confirmer": true },
+      { "texte": "Ce site est son fan club : un projet humoristique et affectueux pour partager ses photos. Il n'a rien d'officiel, sauf dans nos cœurs.", "a_confirmer": true }
+    ]
+  },
+  "faits": [
+    { "libelle": "Nom", "valeur": "Grizette", "a_confirmer": false },
+    { "libelle": "Espèce", "valeur": "Chat domestique (femelle)", "a_confirmer": false },
+    { "libelle": "Pelage", "valeur": "Tigré gris et blanc", "a_confirmer": false },
+    { "libelle": "Yeux", "valeur": "Verts", "a_confirmer": true },
+    { "libelle": "Truffe", "valeur": "Rose, avec une petite tache brune", "a_confirmer": true },
+    { "libelle": "Origine", "valeur": "Hyères (Var, France)", "a_confirmer": true },
+    { "libelle": "Adoptée par", "valeur": "Fanny, dans un refuge", "a_confirmer": true },
+    { "libelle": "Plat préféré", "valeur": "Le poulet", "a_confirmer": true },
+    { "libelle": "Année de naissance", "valeur": "Vers 2023", "a_confirmer": true },
+    { "libelle": "Année d'adoption", "valeur": "", "a_confirmer": true }
+  ],
+  "faq": [
+    { "question": "Qui est Grizette ?", "reponse": "Grizette est une chatte tigrée grise et blanche aux yeux verts, adoptée par Fanny dans un refuge. Ce site est son fan club.", "a_confirmer": true },
+    { "question": "D'où vient Grizette ?", "reponse": "Elle vient de Hyères, dans le Var. Elle a été trouvée vers un an dans une pizzeria abandonnée avec ses chatons, puis recueillie par un refuge.", "a_confirmer": true },
+    { "question": "Quel est le plat préféré de Grizette ?", "reponse": "Le poulet, sans hésitation.", "a_confirmer": true },
+    { "question": "Combien de photos de Grizette y a-t-il sur le site ?", "reponse": "Le site compte {nb_photos} photos de Grizette, toutes visibles dans la galerie. De nouvelles photos arrivent régulièrement.", "a_confirmer": false }
+  ]
+}
