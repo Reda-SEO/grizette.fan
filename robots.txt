@@ -1,0 +1,27 @@
+# grizette.fan : tout le monde est le bienvenu, y compris les robots des IA.
+User-agent: *
+Allow: /
+Disallow: /outils/
+Disallow: /deploy/
+
+# Robots des moteurs de réponse IA : accès explicitement autorisé.
+User-agent: GPTBot
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: ClaudeBot
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: Google-Extended
+User-agent: Applebot-Extended
+User-agent: Meta-ExternalAgent
+User-agent: Amazonbot
+User-agent: DuckAssistBot
+User-agent: MistralAI-User
+User-agent: CCBot
+Allow: /
+Disallow: /outils/
+Disallow: /deploy/
+
+Sitemap: https://grizette.fan/sitemap.xml
