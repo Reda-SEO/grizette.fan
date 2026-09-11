@@ -1,0 +1,26 @@
+#!/bin/sh
+# Hook pre-commit de grizette.fan
+# Régénère le site (liste des photos, pages, sitemap…) avant chaque commit
+# et ajoute les fichiers régénérés au commit.
+# Ce hook ne bloque JAMAIS un commit : en cas de problème, il prévient et laisse passer.
+# Activation (une seule fois) : git config core.hooksPath .githooks
+
+racine="$(git rev-parse --show-toplevel)" || exit 0
+cd "$racine" || exit 0
+
+if ! command -v node >/dev/null 2>&1; then
+  echo "⚠️  grizette : Node.js introuvable, le site n'a pas été régénéré (commit autorisé quand même)."
+  exit 0
+fi
+
+if [ ! -d outils/node_modules/sharp ]; then
+  echo "ℹ️  grizette : sharp n'est pas installé (cd outils && npm install) ; les images ne seront pas optimisées."
+fi
+
+if node outils/generer.mjs --depuis-hook; then
+  git add -A -- index.html 404.html galerie photo img photos.json sitemap.xml llms.txt robots.txt outils/etat.json 2>/dev/null
+else
+  echo "⚠️  grizette : la génération a échoué (voir ci-dessus). Commit autorisé quand même ;"
+  echo "    relance « node outils/generer.mjs » à la main pour corriger."
+fi
+exit 0

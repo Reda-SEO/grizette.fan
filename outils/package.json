@@ -1,0 +1,13 @@
+{
+  "name": "grizette-outils",
+  "private": true,
+  "description": "Outils locaux de génération du site grizette.fan (non déployés).",
+  "type": "module",
+  "scripts": {
+    "generer": "node generer.mjs",
+    "icones": "node icones.mjs"
+  },
+  "devDependencies": {
+    "sharp": "0.35.4"
+  }
+}
