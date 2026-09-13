@@ -9,7 +9,6 @@
   "Grizette (6).jpg": { "alt": "Grizette assise à l'intérieur d'un grand sac en toile de jute posé sur un parquet clair", "legende": "Un sac, donc une maison" },
   "Grizette (7).jpg": { "alt": "Tunnel de jeu pour chat posé sur le parquet, d'où dépasse seulement la queue rayée de Grizette", "legende": "Où est Grizette ? Indice : la queue" },
   "Grizette (8).jpg": { "alt": "Grizette penchée au bord d'un meuble blanc, regardant vers le bas avec curiosité", "legende": "Inspection depuis les hauteurs" },
-  "Grizette (9).jpg": { "alt": "Grizette blottie sous un plaid gris sur un canapé, seules la tête et une patte blanche dépassent", "legende": "Enroulée dans son plaid" },
   "Grizette (10).jpg": { "alt": "Grizette de dos sur un balcon ensoleillé, regardant le jardin à travers la vitre", "legende": "Guetteuse officielle du balcon" },
   "Grizette (11).jpg": { "alt": "Illustration imitant l'emballage d'une figurine « Grizette Action Figure » avec poulet, souris, litière et sac", "legende": "Grizette, la figurine officielle (fausse)" },
   "Grizette (12).jpg": { "alt": "Contre-plongée très rapprochée sur le museau rose et les yeux verts de Grizette", "legende": "Beaucoup trop près de l'objectif" },
@@ -38,5 +37,15 @@
   "Grizette (35).jpg": { "alt": "Grizette couchée sur le dos en plein soleil sur une terrasse en bois, ventre blanc offert", "legende": "Le ventre au soleil (piège probable)" },
   "Grizette (36).jpg": { "alt": "Grizette couchée sur le dos sur une couverture chauffante, la tête à l'envers vers l'objectif", "legende": "À l'envers sur la couverture chauffante" },
   "Grizette (38).jpg": { "alt": "Grizette de profil, regardant au loin, avec son poitrail blanc et ses rayures grises", "legende": "Profil pensif" },
-  "Grizette (39).jpg": { "alt": "Gros plan de face sur Grizette, les yeux plissés et la truffe rose bien visible", "legende": "Yeux plissés, satisfaction totale" }
+  "Grizette (39).jpg": { "alt": "Gros plan de face sur Grizette, les yeux plissés et la truffe rose bien visible", "legende": "Yeux plissés, satisfaction totale" },
+  "Grizette (40).jpeg": { "alt": "Grizette assise dans un bac en plastique transparent rempli de terreau, en plein bâillement, la gueule grande ouverte", "legende": "Bâillement royal dans le bac à terreau" },
+  "Grizette (41).jpeg": { "alt": "Grizette cachée derrière une serviette orange étendue sur un séchoir, sur un balcon ; seules sa tête et sa queue dépassent", "legende": "Cachée derrière la serviette (ou presque)" },
+  "Grizette (42).jpeg": { "alt": "Grizette les yeux fermés, le menton posé dans une main qui la caresse, dans la pénombre", "legende": "Gratouilles sous le menton" },
+  "Grizette (43).jpeg": { "alt": "Grizette endormie de tout son long sur une tablette noire devant une fenêtre aux volets baissés", "legende": "Sieste à la fenêtre" },
+  "Grizette (44).jpeg": { "alt": "Grizette couchée sur une tablette noire devant une fenêtre, les pattes avant repliées, regardant sur le côté", "legende": "Pose de sphinx à la fenêtre" },
+  "Grizette (45).jpeg": { "alt": "Grizette allongée sur un tapis gris à poils longs, levant les yeux vers l'objectif, à côté d'un jouet à plumes", "legende": "Le jouet peut attendre" },
+  "Grizette (46).jpeg": { "alt": "Grizette de profil, les oreilles dressées, face à une bouteille d'eau posée sur une table", "legende": "Face-à-face avec la bouteille d'eau" },
+  "Grizette (47).jpeg": { "alt": "Tête de Grizette tenue dans une main, un œil entrouvert, allongée sur un plaid gris", "legende": "Un œil ouvert, juste au cas où" },
+  "Grizette (48).jpeg": { "alt": "Grizette endormie à l'envers dans un plaid gris, le menton blanc et la truffe rose tournés vers le haut", "legende": "La tête à l'envers dans le plaid" },
+  "Grizette (49).jpeg": { "alt": "Grizette de profil en plein bâillement, les yeux fermés et la langue rose visible", "legende": "Le bâillement du lion" }
 }
