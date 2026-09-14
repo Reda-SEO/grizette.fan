@@ -72,7 +72,7 @@ h3{font-size:1.2rem}
 .truffe:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ombre-bouton)}
 .truffe:focus-visible{outline-color:var(--lien);outline-offset:4px;border-radius:999px}
 .truffe[aria-busy="true"]{cursor:progress}
-.truffe-nez{width:2.1rem;height:1.6rem;flex:none}
+.truffe-nez{width:2rem;height:1.78rem;flex:none}
 .truffe:hover .truffe-nez{animation:boop .35s ease-out}
 .commandes .truffe{width:100%;max-width:23rem}
 @keyframes boop{40%{transform:scale(.82)}75%{transform:scale(1.08)}}
@@ -120,7 +120,7 @@ h3{font-size:1.2rem}
 .photo-nav [rel="prev"]{justify-self:start}
 .photo-nav [rel="next"]{justify-self:end}
 .photo-nav .truffe{min-height:2.9rem;padding:.5rem 1.1rem .5rem .8rem;font-size:.98rem}
-.photo-nav .truffe-nez{width:1.7rem;height:1.3rem}
+.photo-nav .truffe-nez{width:1.6rem;height:1.42rem}
 .retour{text-align:center;margin:0}
 
 /* 404 */
