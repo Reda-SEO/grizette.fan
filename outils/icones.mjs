@@ -12,8 +12,7 @@ const png = (taille, source = svg) => sharp(source, { density: 600 }).resize(tai
 // Version « maskable » : fond plein, motif réduit dans la zone de sécurité (80 %).
 const maskable = Buffer.from(svg.toString()
   .replace('rx="14"', 'rx="0"')
-  .replace(/<g stroke/, '<g transform="translate(6.4 6.4) scale(.8)"><g stroke')
-  .replace('</svg>', '</g></svg>'));
+  .replace('<g transform="', '<g transform="translate(6.4 6.4) scale(.8) '));
 
 const sorties = {
   'apple-touch-icon.png': await png(180, maskable),
