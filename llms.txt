@@ -1,6 +1,6 @@
 # Grizette, le fan club officiel
 
-> Le fan club officiel de Grizette, chatte tigrée grise et blanche aux yeux verts adoptée par Fanny : 49 photos, son histoire et ses petites manies.
+> Le fan club officiel de Grizette, chatte tigrée grise et blanche aux yeux verts adoptée par Fanny : 50 photos, son histoire et ses petites manies.
 
 Grizette est une chatte tigrée grise et blanche. Elle vit avec Fanny, qui l'a adoptée dans un refuge.
 
@@ -27,7 +27,7 @@ Ce site est son fan club : un projet humoristique et affectueux pour partager se
 ## Pages principales
 
 - [Accueil : qui est Grizette ?](https://grizette.fan/) : présentation, fiche d'identité et questions fréquentes
-- [Galerie](https://grizette.fan/galerie/) : les 49 photos de Grizette
+- [Galerie](https://grizette.fan/galerie/) : les 50 photos de Grizette
 - [Plan du site](https://grizette.fan/sitemap.xml)
 
 ## Questions fréquentes
@@ -46,9 +46,9 @@ Le poulet, sans hésitation.
 
 ### Combien de photos de Grizette y a-t-il sur le site ?
 
-Le site compte 49 photos de Grizette, toutes visibles dans la galerie. De nouvelles photos arrivent régulièrement.
+Le site compte 50 photos de Grizette, toutes visibles dans la galerie. De nouvelles photos arrivent régulièrement.
 
-## Photos (49)
+## Photos (50)
 
 - [Le regard qui obtient toujours du poulet · Grizette, photo n°1](https://grizette.fan/photo/grizette-1/) : Gros plan de Grizette levant la tête vers l'objectif, yeux verts grands ouverts et truffe rose tachetée
 - [La sieste, version plan de travail · Grizette, photo n°1 bis](https://grizette.fan/photo/grizette-1-jpeg/) : Grizette allongée sur un plan de travail en bois, la tête posée sur le rebord, les yeux mi-clos
@@ -99,3 +99,4 @@ Le site compte 49 photos de Grizette, toutes visibles dans la galerie. De nouvel
 - [Un œil ouvert, juste au cas où · Grizette, photo n°47](https://grizette.fan/photo/grizette-47/) : Tête de Grizette tenue dans une main, un œil entrouvert, allongée sur un plaid gris
 - [La tête à l'envers dans le plaid · Grizette, photo n°48](https://grizette.fan/photo/grizette-48/) : Grizette endormie à l'envers dans un plaid gris, le menton blanc et la truffe rose tournés vers le haut
 - [Le bâillement du lion · Grizette, photo n°49](https://grizette.fan/photo/grizette-49/) : Grizette de profil en plein bâillement, les yeux fermés et la langue rose visible
+- [Le sphynx · Grizette, photo n°50](https://grizette.fan/photo/grizette-50/) : Le sphynx
