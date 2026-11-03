@@ -1,11 +1,11 @@
 // Génère tout le site statique à partir du dossier images/ et des fichiers de contenu.
-// Usage : node outils/generer.mjs          (lancé automatiquement par le hook pre-commit)
+// Usage : node outils/generer.mjs   (lancé par la GitHub Action à chaque push, et par le hook pre-commit en local)
 // Idempotent : si rien n'a changé, aucun fichier n'est réécrit.
 import { readFile, writeFile, mkdir, readdir, rm } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
-import { listerPhotos, attribuerSlugs, fusionnerMeta, comparer } from './lib/photos.mjs';
+import { listerPhotos, attribuerSlugs, fusionnerMeta, serialiserMeta, comparer } from './lib/photos.mjs';
 import { chargerSharp, preparerImages, attacherImages } from './lib/images.mjs';
 import { pageAccueil, pageGalerie, pagePhoto, page404, titrePhoto, descriptionPhoto } from './lib/gabarits.mjs';
 import { sitemap, robots, llms, manifest } from './lib/robots.mjs';
@@ -46,13 +46,17 @@ async function main() {
   const contenu = await lireJson(R('contenu.json'), null);
   if (!contenu) throw new Error('contenu.json introuvable');
 
-  // 1. Inventaire des photos
-  const photos = attribuerSlugs(await listerPhotos(R('images')), meta);
+  // 1. Inventaire des photos (numéro et slug figés dans photos-meta.json dès la première fois)
+  const photos = await listerPhotos(R('images'));
   if (!photos.length) throw new Error('aucune photo trouvée dans images/');
+  const numerotees = attribuerSlugs(photos, meta);
+  await ecrireSiChange('photos-meta.json', serialiserMeta(meta));
   const { sansDescription, orphelines } = fusionnerMeta(photos, meta);
 
   // 2. Images optimisées
   const sharp = await chargerSharp();
+  // Dans la GitHub Action, sharp est obligatoire : mieux vaut échouer que publier des photos non optimisées.
+  if (!sharp && process.env.GRIZETTE_EXIGER_SHARP === '1') throw new Error('sharp est introuvable (npm ci dans outils/ a-t-il échoué ?)');
   await mkdir(R('img'), { recursive: true });
   const { entrees, bilan } = await preparerImages({ photos, racine, etatImages: etat.images || {}, sharp });
   attacherImages(photos, entrees);
@@ -129,6 +133,7 @@ async function main() {
   else console.log(`   Images : ${bilan.traitees.length} optimisée(s), ${bilan.reutilisees} déjà à jour${bilan.supprimees.length ? `, ${bilan.supprimees.length} ancienne(s) version(s) supprimée(s)` : ''}.`);
   bilan.erreurs.forEach((e) => console.log(`⚠️  Image non optimisée : ${e}`));
   if (sansDescription.length) console.log(`✏️  ${sansDescription.length} photo(s) sans description dans photos-meta.json : ${sansDescription.join(', ')}`);
+  if (numerotees.length) console.log(`🔢 ${numerotees.length} nouvelle(s) photo(s) numérotée(s) : ${numerotees.map((f) => `${f} → ${photos.find((p) => p.fichier === f).label}`).join(', ')}`);
   if (orphelines.length) console.log(`ℹ️  ${orphelines.length} description(s) sans fichier correspondant : ${orphelines.join(', ')}`);
   if (aConfirmer || aCompleter) console.log(`ℹ️  contenu.json : ${aConfirmer} information(s) à confirmer, ${aCompleter} à compléter.`);
   avertissements.forEach((a) => console.log(`ℹ️  ${a}`));

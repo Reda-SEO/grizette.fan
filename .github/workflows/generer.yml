@@ -1,0 +1,93 @@
+# Génération du site : SOURCE DE VÉRITÉ.
+# À chaque push sur main (depuis un PC ou depuis l'espace d'envoi de photos), cette Action
+# régénère galerie, pages photo, sitemap, images optimisées et numéros des photos,
+# commite le résultat s'il a changé, puis (si configuré) déclenche UN déploiement Coolify.
+name: Génération du site
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: # bouton « Run workflow » dans l'onglet Actions, pour relancer à la main
+
+# Une seule génération à la fois ; un push arrivé pendant ce temps attend son tour
+# (et repartira du dernier état de main, donc rien n'est perdu).
+concurrency:
+  group: generation-site
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  generer:
+    # Garde anti-boucle explicite. (Un commit poussé avec le GITHUB_TOKEN ne redéclenche
+    # déjà pas les workflows ; on ignore en plus les commits du bot et ceux marqués.)
+    if: >-
+      github.actor != 'github-actions[bot]' &&
+      !contains(github.event.head_commit.message || '', '[generation-auto]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Récupérer le dépôt (dernier état de main)
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+
+      - name: Installer Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: outils/package-lock.json
+
+      - name: Installer les outils (sharp)
+        run: npm ci --include=dev --no-audit --no-fund
+        working-directory: outils
+
+      - name: Tester la numérotation des photos
+        run: npm test
+        working-directory: outils
+
+      - name: Générer, commiter et pousser
+        env:
+          GRIZETTE_EXIGER_SHARP: "1" # sur le serveur, pas de photo publiée sans versions optimisées
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          GENERES="index.html 404.html galerie photo img photos.json photos-meta.json sitemap.xml llms.txt robots.txt manifest.webmanifest outils/etat.json"
+          for essai in 1 2 3; do
+            node outils/generer.mjs
+            git add -A -- $GENERES
+            if git diff --cached --quiet; then
+              echo "Rien à commiter : les fichiers générés sont déjà à jour."
+              exit 0
+            fi
+            git commit -q -m "Génération automatique du site [generation-auto]"
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+            echo "main a bougé pendant la génération (essai $essai) : on repart du dernier état."
+            git fetch -q origin main
+            git reset -q --hard origin/main
+          done
+          echo "::error::Impossible de pousser les fichiers générés après 3 essais."
+          exit 1
+
+      # Un seul déploiement par changement : si le secret COOLIFY_DEPLOY_WEBHOOK existe
+      # (et que le déploiement automatique est coupé dans Coolify), c'est l'Action qui
+      # déclenche Coolify, une fois les fichiers générés poussés. Sans ce secret, rien ne
+      # se passe ici et Coolify redéploie de lui-même à chaque push (deux déploiements).
+      - name: Déployer sur Coolify
+        env:
+          COOLIFY_DEPLOY_WEBHOOK: ${{ secrets.COOLIFY_DEPLOY_WEBHOOK }}
+          COOLIFY_API_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
+        run: |
+          if [ -z "$COOLIFY_DEPLOY_WEBHOOK" ]; then
+            echo "Pas de webhook Coolify configuré : Coolify redéploie seul à chaque push."
+            exit 0
+          fi
+          curl -fsS --retry 3 --retry-delay 5 --max-time 60 \
+            -H "Authorization: Bearer $COOLIFY_API_TOKEN" \
+            "$COOLIFY_DEPLOY_WEBHOOK" > /dev/null
+          echo "Déploiement Coolify demandé."

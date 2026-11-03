@@ -4,3 +4,6 @@ node_modules/
 Thumbs.db
 .DS_Store
 desktop.ini
+
+# Consignes de travail (jamais publiées)
+todo/

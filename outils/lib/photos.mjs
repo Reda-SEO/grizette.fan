@@ -1,6 +1,6 @@
 // Inventaire des photos : scan du dossier, slugs, numéros, métadonnées.
-// Règle d'or : le slug et le numéro dépendent UNIQUEMENT du nom de fichier,
-// jamais de l'ordre ni du nombre de photos, pour que les URL restent stables.
+// Règle d'or : une fois attribués, le numéro et le slug d'une photo sont figés dans
+// photos-meta.json et ne changent plus jamais, pour que les URL restent stables.
 import { readdir, stat } from 'node:fs/promises';
 import path from 'node:path';
 
@@ -35,41 +35,140 @@ export async function listerPhotos(dossier) {
     const { size } = await stat(path.join(dossier, e.name));
     if (size === 0) continue;
     const base = e.name.slice(0, -(ext.length + 1));
-    photos.push({ fichier: e.name, base, ext, mime: MIME[ext], num: numeroDepuisNom(base) });
+    photos.push({ fichier: e.name, base, ext, mime: MIME[ext] });
   }
   return photos.sort((a, b) => comparer(a.fichier, b.fichier));
 }
 
-// Attribue slug, rang (bis, ter…) et libellé à chaque photo, puis trie pour l'affichage.
-export function attribuerSlugs(photos, meta) {
+// Slug et numéro « naturels », déduits du nom de fichier (règle historique).
+// Ne sert plus qu'à proposer un numéro et un slug à une photo encore jamais vue.
+function proposerDepuisNoms(photos, meta) {
   const groupes = new Map();
   for (const p of photos) {
     const force = meta[p.fichier]?.slug ? slugifier(meta[p.fichier].slug) : '';
     let s = force || slugifier(p.base) || 'photo';
     if (!force && !s.startsWith('grizette')) s = `grizette-${s}`;
-    p.slugDeBase = s;
     if (!groupes.has(s)) groupes.set(s, []);
     groupes.get(s).push(p);
   }
   const pris = new Set();
+  const propositions = new Map();
   for (const [s, groupe] of [...groupes].sort((a, b) => comparer(a[0], b[0]))) {
     groupe.sort((a, b) => (PRIORITE.indexOf(a.ext) - PRIORITE.indexOf(b.ext)) || comparer(a.fichier, b.fichier));
     groupe.forEach((p, i) => {
       let slug = i === 0 ? s : `${s}-${p.ext}`;
       for (let n = 2; pris.has(slug); n++) slug = `${s}-${p.ext}-${n}`;
       pris.add(slug);
-      p.slug = slug;
-      p.rang = i;
+      propositions.set(p.fichier, { slug, rang: i });
     });
   }
-  for (const p of photos) {
-    p.label = p.num !== null ? `n°${p.num}${RANGS[p.rang] ?? ` (${p.rang + 1})`}` : 'hors-série';
+  return propositions;
+}
+
+const estNumero = (n) => Number.isInteger(n) && n > 0;
+
+// Numéro et slug STABLES : enregistrés une fois pour toutes dans photos-meta.json
+// (champs « num », « rang » et « slug »), puis jamais recalculés.
+// - Photo déjà numérotée : on reprend tel quel ce qui est enregistré.
+// - Toute nouvelle photo : numéro pris dans le compteur « _numero_suivant », stocké dans
+//   photos-meta.json et indépendant des photos présentes. Il ne redescend jamais, même si on
+//   supprime la photo au plus grand numéro : un numéro (donc une URL) n'est jamais réattribué.
+// - Exception : « Grizette (N) » garde N, mais seulement si N n'a encore jamais été attribué
+//   (N ≥ compteur). Un nom comme « Grizette (9) » ne peut donc pas ressusciter une ancienne URL.
+// Modifie `meta` en place ; renvoie la liste des photos nouvellement numérotées.
+export function attribuerSlugs(photos, meta) {
+  const propositions = proposerDepuisNoms(photos, meta);
+  const numerosPris = new Set();
+  const slugsPris = new Set();
+  const dejaNumerotees = Object.entries(meta).some(([cle, m]) => !cle.startsWith('_') && estNumero(m?.num));
+  if (!estNumero(meta._numero_suivant) && dejaNumerotees) {
+    // Sans compteur, on ne sait plus quels numéros ont déjà servi : on refuse plutôt que risquer
+    // de réattribuer l'URL d'une photo supprimée.
+    throw new Error('photos-meta.json : « _numero_suivant » a disparu. Remettez-le (sa dernière valeur est dans l\'historique git du fichier).');
   }
-  return photos.sort((a, b) => {
-    if (a.num === null && b.num !== null) return 1;
-    if (b.num === null && a.num !== null) return -1;
-    return (a.num - b.num) || (a.rang - b.rang) || comparer(a.fichier, b.fichier);
+  let suivant = estNumero(meta._numero_suivant) ? meta._numero_suivant : 1;
+  for (const [cle, m] of Object.entries(meta)) {
+    if (cle.startsWith('_') || !m || !estNumero(m.num)) continue;
+    suivant = Math.max(suivant, m.num + 1); // garde-fou si le compteur a été baissé à la main
+  }
+
+  // 1. Photos déjà figées : elles passent en premier, rien ne change pour elles.
+  const nouvelles = [];
+  for (const p of photos) {
+    const m = meta[p.fichier];
+    if (m && estNumero(m.num) && m.slug) {
+      p.num = m.num;
+      p.rang = Number.isInteger(m.rang) && m.rang > 0 ? m.rang : 0;
+      let slug = slugifier(m.slug);
+      // Doublon saisi à la main : on dépanne sans réécrire le fichier.
+      for (let n = 2; slugsPris.has(slug); n++) slug = `${slugifier(m.slug)}-${n}`;
+      p.slug = slug;
+      numerosPris.add(`${p.num}/${p.rang}`);
+      slugsPris.add(slug);
+    } else {
+      nouvelles.push(p);
+    }
+  }
+
+  // 2. Nouvelles photos, dans l'ordre d'envoi (date d'ajout, puis nom de fichier).
+  nouvelles.sort((a, b) => comparer(meta[a.fichier]?.ajoute_le || '', meta[b.fichier]?.ajoute_le || '')
+    || comparer(a.fichier, b.fichier));
+  const libreSlug = (s) => !slugsPris.has(s);
+  for (const p of nouvelles) {
+    const prop = propositions.get(p.fichier);
+    const numNom = numeroDepuisNom(p.base);
+    // Migration initiale (aucune photo encore numérotée) : on reprend les numéros des noms tels quels.
+    const migration = !dejaNumerotees;
+    const nomAccepte = numNom !== null && (migration || numNom >= suivant)
+      && !numerosPris.has(`${numNom}/${migration ? prop.rang : 0}`) && libreSlug(prop.slug);
+    if (nomAccepte) {
+      p.num = numNom;
+      p.rang = migration ? prop.rang : 0;
+      p.slug = prop.slug;
+    } else {
+      while (numerosPris.has(`${suivant}/0`)) suivant++;
+      p.num = suivant;
+      p.rang = 0;
+      const voulu = meta[p.fichier]?.slug ? slugifier(meta[p.fichier].slug) : `grizette-${p.num}`;
+      let slug = voulu;
+      for (let n = 2; !libreSlug(slug); n++) slug = `${voulu}-${n}`;
+      p.slug = slug;
+    }
+    suivant = Math.max(suivant, p.num + 1);
+    numerosPris.add(`${p.num}/${p.rang}`);
+    slugsPris.add(p.slug);
+    const m = (meta[p.fichier] = meta[p.fichier] || {});
+    m.num = p.num;
+    if (p.rang) m.rang = p.rang; else delete m.rang;
+    m.slug = p.slug;
+  }
+  meta._numero_suivant = suivant;
+
+  for (const p of photos) p.label = `n°${p.num}${RANGS[p.rang] ?? ` (${p.rang + 1})`}`;
+  photos.sort((a, b) => (a.num - b.num) || (a.rang - b.rang) || comparer(a.fichier, b.fichier));
+  return nouvelles.map((p) => p.fichier);
+}
+
+// Sérialise photos-meta.json : une ligne par photo (lisible et facile à éditer à la main),
+// clés techniques en tête, photos rangées par numéro. Sortie stable : pas de diff parasite.
+const ORDRE_CHAMPS = ['alt', 'legende', 'date', 'num', 'rang', 'slug', 'ajoute_par', 'ajoute_le'];
+export function serialiserMeta(meta) {
+  const ordreChamps = (a, b) => {
+    const ia = ORDRE_CHAMPS.indexOf(a); const ib = ORDRE_CHAMPS.indexOf(b);
+    return ((ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib)) || comparer(a, b);
+  };
+  const ligne = (v) => {
+    if (!v || typeof v !== 'object' || Array.isArray(v)) return JSON.stringify(v);
+    const champs = Object.keys(v).sort(ordreChamps).map((k) => `${JSON.stringify(k)}: ${JSON.stringify(v[k])}`);
+    return champs.length ? `{ ${champs.join(', ')} }` : '{}';
+  };
+  const cles = Object.keys(meta).sort((a, b) => {
+    const ta = a.startsWith('_'); const tb = b.startsWith('_');
+    if (ta !== tb) return ta ? -1 : 1;
+    const na = meta[a]?.num ?? Infinity; const nb = meta[b]?.num ?? Infinity;
+    return (na - nb) || ((meta[a]?.rang || 0) - (meta[b]?.rang || 0)) || comparer(a, b);
   });
+  return `{\n${cles.map((k) => `  ${JSON.stringify(k)}: ${ligne(meta[k])}`).join(',\n')}\n}\n`;
 }
 
 // Fusionne les métadonnées saisies à la main ; complète les manques par des valeurs par défaut.
@@ -77,7 +176,7 @@ export function fusionnerMeta(photos, meta) {
   const sansDescription = [];
   for (const p of photos) {
     const m = meta[p.fichier] || {};
-    const suffixe = p.num !== null ? `photo ${p.label}` : `photo « ${p.base} »`;
+    const suffixe = `photo ${p.label}`;
     p.decrite = Boolean(m.alt && m.legende);
     if (!p.decrite) sansDescription.push(p.fichier);
     p.alt = (m.alt || `Grizette, la chatte de Fanny, ${suffixe}`).trim();

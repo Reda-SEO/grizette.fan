@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "generer": "node generer.mjs",
-    "icones": "node icones.mjs"
+    "icones": "node icones.mjs",
+    "test": "node --test \"lib/*.test.mjs\""
   },
   "devDependencies": {
     "sharp": "0.35.4"
