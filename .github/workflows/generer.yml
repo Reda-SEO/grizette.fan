@@ -87,7 +87,15 @@ jobs:
             echo "Pas de webhook Coolify configuré : Coolify redéploie seul à chaque push."
             exit 0
           fi
-          curl -fsS --retry 3 --retry-delay 5 --max-time 60 \
-            -H "Authorization: Bearer $COOLIFY_API_TOKEN" \
-            "$COOLIFY_DEPLOY_WEBHOOK" > /dev/null
-          echo "Déploiement Coolify demandé."
+          # Coolify 4.3+ attend un POST ; les versions plus anciennes un GET (repli si 405).
+          appel() {
+            curl -sS --retry 3 --retry-delay 5 --max-time 60 -o reponse.txt -w '%{http_code}' \
+              -X "$1" -H "Authorization: Bearer $COOLIFY_API_TOKEN" "$COOLIFY_DEPLOY_WEBHOOK"
+          }
+          code=$(appel POST)
+          if [ "$code" = "405" ]; then code=$(appel GET); fi
+          if [ "$code" -lt 200 ] || [ "$code" -ge 300 ]; then
+            echo "::error::Coolify a refusé le déploiement (HTTP $code) : $(head -c 300 reponse.txt)"
+            exit 1
+          fi
+          echo "Déploiement Coolify demandé (HTTP $code) : $(head -c 300 reponse.txt)"
